@@ -27,8 +27,7 @@ python3 ibkr_flex_trades.py --xml examples/sample_flex.xml --out trades.csv
 2. Tick the **Trades** section (Executions), format **XML**, period e.g. *Last 365 Calendar Days*.
 3. **Reports → Settings → Flex Web Service** → generate a token.
 
-Step-by-step with screenshots, the exact trade fields to tick, and fixes for common errors
-(1003, 1012, 1018, 1020): **[IBKR Flex Query setup guide](https://fillscope.com/guides/ibkr-flex-query/?utm_source=github&utm_medium=readme&utm_campaign=ibkr-flex-trades)**.
+Step by step, with the sections and fields to tick, how to test the query, and fixes for common errors: **[IBKR Flex Query setup guide](https://fillscope.com/guides/ibkr-flex-query/?utm_source=github&utm_medium=readme&utm_campaign=ibkr-flex-trades)**.
 
 ## Notes
 
