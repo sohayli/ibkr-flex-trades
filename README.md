@@ -43,4 +43,8 @@ journal that pulls the same Flex Query automatically: equity curve, R-multiples,
 fills drawn on TradingView charts. Free for the last 90 days of history;
 [try the demo account](https://fillscope.com/api/auth/demo?utm_source=github&utm_medium=readme&utm_campaign=ibkr-flex-trades) without connecting anything.
 
+Practising setups before you journal them? The
+[Chart Workbook](https://fillscope.com/workbook?utm_source=github&utm_medium=readme&utm_campaign=ibkr-flex-trades)
+is 30 technical analysis lessons with drills on real charts ($1.99 PDF).
+
 MIT licensed.
