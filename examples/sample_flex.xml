@@ -1,0 +1,6 @@
+<FlexQueryResponse queryName="t" type="AF"><FlexStatements count="1"><FlexStatement accountId="U0000000"><Trades>
+<Trade accountId="U0000000" currency="USD" assetCategory="STK" symbol="AAPL" tradeDate="20260102" dateTime="20260102;093501" quantity="10" tradePrice="190" ibCommission="-1" netCash="-1901" fifoPnlRealized="0" buySell="BUY" openCloseIndicator="O" tradeID="1" levelOfDetail="EXECUTION"/>
+<Trade accountId="U0000000" currency="USD" assetCategory="STK" symbol="AAPL" tradeDate="20260105" dateTime="20260105;100000" quantity="-10" tradePrice="200" ibCommission="-1" netCash="1999" fifoPnlRealized="98" buySell="SELL" openCloseIndicator="C" tradeID="2" levelOfDetail="EXECUTION"/>
+<Trade accountId="U0000000" currency="USD" assetCategory="STK" symbol="MSFT" tradeDate="20260106" dateTime="20260106;100000" quantity="-5" tradePrice="400" ibCommission="-1" netCash="1999" fifoPnlRealized="-40" buySell="SELL" openCloseIndicator="C" tradeID="3" levelOfDetail="EXECUTION"/>
+<Trade accountId="U0000000" symbol="MSFT" levelOfDetail="ORDER" fifoPnlRealized="-40"/>
+</Trades></FlexStatement></FlexStatements></FlexQueryResponse>
