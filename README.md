@@ -15,6 +15,14 @@ closing fills: 2 | win rate: 50.0% | avg win: 98.00 | avg loss: -40.00
 expectancy per closing fill: 29.00 | profit factor: 2.45 | total realized: 58.00
 ```
 
+Pick the date range per run instead of the one saved in the query (IBKR `p` / `fd`+`td` overrides, max 365 days) —
+handy for incremental pulls with no gaps or duplicates:
+
+```bash
+python3 ibkr_flex_trades.py --days 7 --out last_week.csv
+python3 ibkr_flex_trades.py --from 2026-01-01 --to 2026-06-30 --out h1.csv
+```
+
 Offline (a Flex XML you already downloaded from Client Portal):
 
 ```bash
@@ -33,6 +41,7 @@ Step by step, with the sections and fields to tick, how to test the query, and f
 
 - `levelOfDetail` ORDER / summary rows are skipped so partial fills are not double counted.
 - P&L is IBKR's `fifoPnlRealized` in each trade's own currency; use `fxRateToBase` for mixed-currency accounts.
+- Without `--days`/`--from`/`--to` the period saved in the Flex Query is used. Overrides apply only to that request.
 - Flex statements are generated asynchronously; the script polls `GetStatement` until it is ready.
 - The token can only read reports. Keep it out of shell history and git (use env vars).
 

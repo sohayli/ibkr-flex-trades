@@ -8,6 +8,8 @@ Standard library only (Python 3.8+). Read-only: the Flex token can only fetch re
     export IBKR_FLEX_QUERY=...   # Query ID of an Activity Flex Query that includes the Trades section
     python3 ibkr_flex_trades.py --out trades.csv
 
+    python3 ibkr_flex_trades.py --from 2026-01-01 --to 2026-06-30   # override the query's date range (<=365 days)
+
     python3 ibkr_flex_trades.py --xml saved_statement.xml --out trades.csv   # offline, from a saved XML
 
 Setup guide (token, query ID, which fields to tick):
@@ -41,8 +43,32 @@ def _get(url, params):
         return r.read()
 
 
-def fetch_statement(token, query_id, tries=10, wait=5):
-    root = ET.fromstring(_get(SEND_URL, {"t": token, "q": query_id, "v": "3"}))
+def send_params(token, query_id, days=None, from_date=None, to_date=None):
+    """SendRequest parameters. The date range saved in the Flex Query is used unless overridden:
+    days -> p (1-365 day lookback), from_date/to_date -> fd/td (yyyymmdd, together, <=365 days apart)."""
+    params = {"t": token, "q": query_id, "v": "3"}
+    if days is not None and (from_date or to_date):
+        raise ValueError("use either --days or --from/--to, not both")
+    if days is not None:
+        if not 1 <= days <= 365:
+            raise ValueError("--days must be between 1 and 365")
+        params["p"] = str(days)
+    if from_date or to_date:
+        if not (from_date and to_date):
+            raise ValueError("--from and --to must be given together")
+        params["fd"], params["td"] = _yyyymmdd(from_date), _yyyymmdd(to_date)
+    return params
+
+
+def _yyyymmdd(d):
+    d = d.replace("-", "")
+    if len(d) != 8 or not d.isdigit():
+        raise ValueError(f"date must be YYYYMMDD or YYYY-MM-DD: {d}")
+    return d
+
+
+def fetch_statement(token, query_id, tries=10, wait=5, **rng):
+    root = ET.fromstring(_get(SEND_URL, send_params(token, query_id, **rng)))
     if root.findtext("Status") != "Success":
         sys.exit(f"SendRequest failed: {root.findtext('ErrorCode')} {root.findtext('ErrorMessage')}")
     ref = root.findtext("ReferenceCode")
@@ -101,6 +127,9 @@ def main():
     ap.add_argument("--query", default=os.environ.get("IBKR_FLEX_QUERY"))
     ap.add_argument("--xml", help="parse a saved Flex XML file instead of downloading")
     ap.add_argument("--out", default="trades.csv")
+    ap.add_argument("--days", type=int, help="override the query's period: last N days (1-365)")
+    ap.add_argument("--from", dest="from_date", help="override the query's range: from date (YYYYMMDD or YYYY-MM-DD)")
+    ap.add_argument("--to", dest="to_date", help="override the query's range: to date, used with --from (max 365 days)")
     a = ap.parse_args()
     if a.xml:
         with open(a.xml, "rb") as f:
@@ -108,7 +137,12 @@ def main():
     else:
         if not a.token or not a.query:
             ap.error("set IBKR_FLEX_TOKEN and IBKR_FLEX_QUERY (or pass --token/--query), or use --xml")
-        body = fetch_statement(a.token, a.query)
+        try:
+            rng = dict(days=a.days, from_date=a.from_date, to_date=a.to_date)
+            send_params(a.token, a.query, **rng)
+        except ValueError as e:
+            ap.error(str(e))
+        body = fetch_statement(a.token, a.query, **rng)
     rows = parse_trades(body)
     with open(a.out, "w", newline="") as f:
         w = csv.DictWriter(f, fieldnames=FIELDS)
